@@ -43,6 +43,10 @@ that are part of an online music service: [spotify.json](https://gist.githubuser
   code you're writing.
 - Your code should be executable on Mac or Linux.
 
+### My notes
+
+- [ ] Make the script executable and add instructions on how to run it
+
 ## How do I use this?
 
 ### Installation

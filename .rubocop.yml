@@ -1,0 +1,15 @@
+AllCops:
+  NewCops: enable
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+
+# Styles
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/BlockComments:
+  Exclude:
+    - spec/**/*
