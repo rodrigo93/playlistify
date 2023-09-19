@@ -85,9 +85,9 @@ If you want to run the tests, you can do so by running `rspec` in the root.
 bundle exec rspec
 ```
 
-## Problem Solving Walkthrough
+## Problem Solving Walkthrough 🚶🏻‍♂️
 
-### Entities relationships and attributes
+### Entities relationships and attributes 🔗
 The first thing I did was analyzing the `spotify.json` file and created
 a [mermaid](https://mermaid-js.github.io/mermaid/#/) diagram to visualize the
 relationships between the entities. This project consists of 3 entities: `User`,
@@ -128,3 +128,43 @@ With that, I need to keep in mind that we want to achieve the following:
   -  In other words, create a new `Playlist` with existing user as `owner_id`
 - Remove an existing playlist
   - Simply put, remove a `Playlist` from the output file
+
+Cool! But how will we achieve that with the `changes` file? 🤔
+
+Let's think about that.
+
+### The `changes` file 👺
+
+The `changes` file is a JSON file that contains a list of changes that we want
+to apply to the `spotify.json` file. It looks like this:
+
+```json
+[
+  {
+    "action": "add_song",
+    "playlist_id": "1",
+    "song_id": "42"
+  },
+  {
+    "action": "add_playlist",
+    "playlist": {
+      "id": "4",
+      "owner_id": "3",
+      "song_ids": ["6", "8", "11"]
+    }
+  },
+  {
+    "action": "remove_playlist",
+    "playlist_id": "2"
+  }
+]
+```
+
+I decided to go with JSON as it's a simple format and it's easy to parse. Also,
+it's a common format used in the web, so it's a good choice for this project.
+
+The changes will be applied in the order they are in the file, so we need to
+keep that in mind.
+
+Also we talk about `change`, `change`, and `change`. So sounds like it makes
+sense to create a `Change` class to represent a change.
