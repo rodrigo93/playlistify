@@ -1,0 +1,41 @@
+name: Application
+
+on: [push]
+
+jobs:
+  vulnerability-check:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+    steps:
+      - uses: actions/checkout@v3 # https://github.com/marketplace/actions/checkout
+      - uses: ruby/setup-ruby@v1  # https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      - name: Run bundle-audit
+        run: bundle exec bundle-audit
+  rubocop:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+    steps:
+      - uses: actions/checkout@v3 # https://github.com/marketplace/actions/checkout
+      - uses: ruby/setup-ruby@v1  # https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      - name: Run Rubocop Lints
+        run: bundle exec rubocop
+  rspec:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+    steps:
+      - uses: actions/checkout@v3 # https://github.com/marketplace/actions/checkout
+      - uses: ruby/setup-ruby@v1  # https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      - name: Run Rspec
+        run: bundle exec rspec
