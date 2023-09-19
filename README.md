@@ -51,7 +51,8 @@ that are part of an online music service: [spotify.json](https://gist.githubuser
 
 ### Installation
 
-_TODO_
+To run this project you need to have Ruby v3 installed. If you don't have it
+installed, you can follow [this guide](https://www.ruby-lang.org/en/documentation/installation/).
 
 ### Usage
 
@@ -63,16 +64,107 @@ _TODO_
 
 ## Contributing
 
-_TODO_
+If you want to contribute to this project, feel free to clone it and submit a
+pull request. I'll be happy to review it and merge it if it's good to go.
+Following subsections will help you setup the project and run the tests.
 
 ### Setup
 
-_TODO_
+This is a simple Ruby project, so you just need to install the dependencies
+and you're good to go.
+
+```shell
+bundle install
+```
 
 ### Testing
 
-_TODO_
+If you want to run the tests, you can do so by running `rspec` in the root.
 
-## Final Thoughts
+```shell
+bundle exec rspec
+```
 
-_TODO_
+## Problem Solving Walkthrough 🚶🏻‍♂️
+
+### Entities relationships and attributes 🔗
+The first thing I did was analyzing the `spotify.json` file and created
+a [mermaid](https://mermaid-js.github.io/mermaid/#/) diagram to visualize the
+relationships between the entities. This project consists of 3 entities: `User`,
+`Song`, and `Playlist`. And the relationships between them are as follows:
+
+```mermaid
+erDiagram
+    User ||--o{ Playlist : has
+    Song ||--o{ Playlist : has
+```
+
+As for their class diagram and attributes, I came up with the following:
+
+```mermaid
+classDiagram
+  Playlist *-- User
+  Playlist *-- Song
+    class User {
+      +String id
+      +String name
+    }
+    class Playlist {
+      +String id
+      +String owner_id
+      +List~String~ song_ids
+    }
+    class Song {
+      +String id
+      +String artist
+      +String title
+    }
+```
+
+With that, I need to keep in mind that we want to achieve the following:
+- **Add an existing song to an existing playlist**
+  - That is, add `song_id` to a `Playlist.song_ids` list
+- **Add a new playlist for an existing user**
+  -  In other words, create a new `Playlist` with existing user as `owner_id`
+- Remove an existing playlist
+  - Simply put, remove a `Playlist` from the output file
+
+Cool! But how will we achieve that with the `changes` file? 🤔
+
+Let's think about that.
+
+### The `changes` file 👺
+
+The `changes` file is a JSON file that contains a list of changes that we want
+to apply to the `spotify.json` file. It looks like this:
+
+```json
+[
+  {
+    "action": "add_song",
+    "playlist_id": "1",
+    "song_id": "42"
+  },
+  {
+    "action": "add_playlist",
+    "playlist": {
+      "id": "4",
+      "owner_id": "3",
+      "song_ids": ["6", "8", "11"]
+    }
+  },
+  {
+    "action": "remove_playlist",
+    "playlist_id": "2"
+  }
+]
+```
+
+I decided to go with JSON as it's a simple format and it's easy to parse. Also,
+it's a common format used in the web, so it's a good choice for this project.
+
+The changes will be applied in the order they are in the file, so we need to
+keep that in mind.
+
+Also we talk about `change`, `change`, and `change`. So sounds like it makes
+sense to create a `Change` class to represent a change.
