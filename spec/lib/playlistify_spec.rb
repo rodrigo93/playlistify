@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-require_relative '../playlistify'
+require_relative '../../lib/playlistify'
 
 RSpec.describe Playlistify do
   it 'prints temporary message' do
