@@ -15,8 +15,8 @@ RSpec.describe AddPlaylistToUserChange do
     let(:output_data) do
       {
         'users' => [
-          { 'id' => '1', 'name' => 'User1', 'playlists' => [] },
-          { 'id' => '2', 'name' => 'User2', 'playlists' => [] }
+          { 'id' => '1', 'name' => 'User1' },
+          { 'id' => '2', 'name' => 'User2' }
         ],
         'playlists' => []
       }
@@ -35,15 +35,24 @@ RSpec.describe AddPlaylistToUserChange do
 
     context 'when the user exists' do
       context 'and the playlist already exists for the user' do
-        it 'logs that the playlist already exists and skips' do
-          user_data = output_data['users'][0]
-          user_data['playlists'] << { 'id' => playlist_id }
+        let(:output_data) do
+          {
+            'users' => [
+              { 'id' => '1', 'name' => 'User1' },
+              { 'id' => '2', 'name' => 'User2' }
+            ],
+            'playlists' => [
+              { 'id' => playlist_id, 'owner_id' => user_id, 'song_ids' => song_ids }
+            ]
+          }
+        end
 
+        it 'logs that the playlist already exists and skips' do
           expect { subject }.to output(
             "Playlist ##{playlist_id} already exists for user #1\nSkipping...\n"
           ).to_stdout
 
-          expect(user_data['playlists'].size).to eq(1)
+          expect(output_data['playlists'].size).to eq(1)
         end
       end
 
@@ -56,9 +65,9 @@ RSpec.describe AddPlaylistToUserChange do
         it 'adds the playlist to the user with correct owner_id' do
           subject
 
-          expect(output_data['users'].first['playlists'].size).to eq(1)
-          expect(output_data['users'].first['playlists'].first['id']).to eq(playlist_id)
-          expect(output_data['users'].first['playlists'].first['owner_id']).to eq(user_id)
+          expect(output_data['playlists'].size).to eq(1)
+          expect(output_data['playlists'].first['id']).to eq(playlist_id)
+          expect(output_data['playlists'].first['owner_id']).to eq(user_id)
         end
       end
 
@@ -66,10 +75,10 @@ RSpec.describe AddPlaylistToUserChange do
         it 'adds the playlist to the user' do
           subject
 
-          expect(output_data['users'].first['playlists'].size).to eq(1)
-          expect(output_data['users'].first['playlists'].first['id']).to eq(playlist_id)
-          expect(output_data['users'].first['playlists'].first['owner_id']).to eq(user_id)
-          expect(output_data['users'].first['playlists'].first['song_ids']).to eq(song_ids)
+          expect(output_data['playlists'].size).to eq(1)
+          expect(output_data['playlists'].first['id']).to eq(playlist_id)
+          expect(output_data['playlists'].first['owner_id']).to eq(user_id)
+          expect(output_data['playlists'].first['song_ids']).to eq(song_ids)
         end
       end
 
@@ -81,7 +90,7 @@ RSpec.describe AddPlaylistToUserChange do
             "Skipping playlist ##{playlist_id} because it's empty\n"
           ).to_stdout
 
-          expect(output_data['users'][0]['playlists']).to be_empty
+          expect(output_data['playlists']).to be_empty
         end
       end
 
@@ -93,7 +102,7 @@ RSpec.describe AddPlaylistToUserChange do
             "Skipping playlist ##{playlist_id} because it's empty\n"
           ).to_stdout
 
-          expect(output_data['users'][0]['playlists']).to be_empty
+          expect(output_data['playlists']).to be_empty
         end
       end
     end
@@ -106,7 +115,7 @@ RSpec.describe AddPlaylistToUserChange do
           "User ##{user_id} not found\nSkipping...\n"
         ).to_stdout
 
-        expect(output_data['users'][0]['playlists']).to be_empty
+        expect(output_data['playlists']).to be_empty
       end
     end
   end
