@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/models/changes/add_song_to_playlist_change'
-require 'json'
+require 'spec_helper'
 
-describe AddSongToPlaylistChange do
+require_relative '../../../../lib/models/changes/add_song_to_playlist_change'
+
+RSpec.describe AddSongToPlaylistChange do
   describe '#apply_to' do
     subject { described_class.new(change_data).apply_to(output_data) }
 

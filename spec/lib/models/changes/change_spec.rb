@@ -2,7 +2,6 @@
 
 require 'spec_helper'
 
-require 'json'
 require_relative '../../../../lib/models/changes/change'
 
 RSpec.describe Change do

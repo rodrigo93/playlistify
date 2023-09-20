@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+# Load lib path
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+
+# Require all files in lib path in the correct order
+require 'models/changes/change'
+
+require 'models/changes/add_song_to_playlist_change'
+require 'models/changes/add_playlist_to_user_change'
+require 'models/changes/remove_playlist_change'
+
 # The generated `.rspec` file contains `--require spec_helper` which will cause
 # this file to always be loaded, without a need to explicitly require it in any
 # files.
