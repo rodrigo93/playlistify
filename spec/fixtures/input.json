@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "User1"
+    },
+    {
+      "id": "2",
+      "name": "User2"
+    }
+  ],
+  "playlists": [
+    {
+      "id": "1",
+      "owner_id": "1",
+      "song_ids": ["1", "2"]
+    },
+    {
+      "id": "2",
+      "owner_id": "2",
+      "song_ids": ["3", "4"]
+    }
+  ],
+  "songs": [
+    {
+      "id": "1",
+      "artist": "Artist1",
+      "title": "Song1"
+    },
+    {
+      "id": "2",
+      "artist": "Artist2",
+      "title": "Song2"
+    },
+    {
+      "id": "3",
+      "artist": "Artist3",
+      "title": "Song3"
+    },
+    {
+      "id": "4",
+      "artist": "Artist4",
+      "title": "Song4"
+    }
+  ]
+}
