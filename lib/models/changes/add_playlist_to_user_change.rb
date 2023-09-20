@@ -2,7 +2,6 @@
 
 require_relative 'change'
 
-# TODO: Validate if songs exist
 class AddPlaylistToUserChange < Change
   def apply_to(output_data)
     user_data = user(output_data)
@@ -14,7 +13,7 @@ class AddPlaylistToUserChange < Change
     end
 
     return if playlist_exists?(output_data)
-    return unless valid_song_ids?(playlist)
+    return unless valid_song_ids?(output_data)
 
     output_data['playlists'] << playlist
   end
@@ -43,12 +42,23 @@ class AddPlaylistToUserChange < Change
     @user ||= output_data['users'].find { |u| u['id'] == user_id }
   end
 
-  def valid_song_ids?(playlist)
-    if playlist['song_ids'].nil? || playlist['song_ids'].empty?
+  # rubocop:disable Metrics/MethodLength
+  def valid_song_ids?(output_data)
+    playlist_song_ids = playlist['song_ids']
+
+    if playlist_song_ids.nil? || playlist_song_ids.empty?
       puts "Skipping playlist ##{playlist['id']} because it's empty"
+      return false
+    end
+
+    invalid_songs = playlist_song_ids - output_data['songs'].map { |s| s['id'] }
+
+    unless invalid_songs.empty?
+      puts "Skipping playlist ##{playlist['id']} because it has invalid songs: #{invalid_songs.join(', ')}"
       return false
     end
 
     true
   end
+  # rubocop:enable Metrics/MethodLength
 end

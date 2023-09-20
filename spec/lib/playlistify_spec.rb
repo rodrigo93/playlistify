@@ -29,11 +29,10 @@ RSpec.describe Playlistify do
       output_data = JSON.parse(File.read(output_file))
 
       expect(output_data['users'].size).to eq(2)
-      expect(output_data['playlists'].size).to eq(4)
+      expect(output_data['playlists'].size).to eq(3) # Playlist #4 is invalid
       expect(output_data['playlists'][0]['song_ids']).to eq(%w[1 2 5])
       expect(output_data['playlists'][1]['song_ids']).to eq(%w[3 4 12])
-      expect(output_data['playlists'][2]['song_ids']).to eq(%w[6 8 11])
-      expect(output_data['playlists'][3]['song_ids']).to eq(%w[2 3 4])
+      expect(output_data['playlists'][2]['song_ids']).to eq(%w[2 3 4])
     end
   end
 end

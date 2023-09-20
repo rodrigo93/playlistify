@@ -10,7 +10,7 @@ RSpec.describe AddPlaylistToUserChange do
 
     let(:user_id)     { '1' }
     let(:playlist_id) { '1' }
-    let(:song_ids)    { %w[123 456] }
+    let(:song_ids)    { %w[1 3] }
 
     let(:output_data) do
       {
@@ -18,7 +18,12 @@ RSpec.describe AddPlaylistToUserChange do
           { 'id' => '1', 'name' => 'User1' },
           { 'id' => '2', 'name' => 'User2' }
         ],
-        'playlists' => []
+        'playlists' => [],
+        'songs' => [
+          { 'id' => '1', 'title' => 'Song 1' },
+          { 'id' => '2', 'title' => 'Song 2' },
+          { 'id' => '3', 'title' => 'Song 3' }
+        ]
       }
     end
 
@@ -100,6 +105,18 @@ RSpec.describe AddPlaylistToUserChange do
         it 'skips adding the playlist and logs a message' do
           expect { subject }.to output(
             "Skipping playlist ##{playlist_id} because it's empty\n"
+          ).to_stdout
+
+          expect(output_data['playlists']).to be_empty
+        end
+      end
+
+      context "and some song doesn't exist" do
+        let(:song_ids) { %w[1 2 789] }
+
+        it 'skips adding the playlist and logs a message' do
+          expect { subject }.to output(
+            "Skipping playlist #1 because it has invalid songs: 789\n"
           ).to_stdout
 
           expect(output_data['playlists']).to be_empty
