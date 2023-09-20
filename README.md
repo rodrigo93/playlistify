@@ -23,29 +23,25 @@ that are part of an online music service: [spotify.json](https://gist.githubuser
 
 ### Features
 - [x] Add an existing song to an existing playlist
-- [] Add a new playlist for an existing user; the playlist should contain at
+- [x] Add a new playlist for an existing user; the playlist should contain at
   least one **existing** song
 - [x] Remove an existing playlist
 
 ### README.md
-- [ ] Explains how to use your application and a way to validate its output
-- [ ] Describes what changes you would need to make in order to scale this
+- [x] Explains how to use your application and a way to validate its output
+- [x] Describes what changes you would need to make in order to scale this
   application to handle very large input files and/or very large changes files.
   Just describe these changes — please do not implement a scaled-up version of
   the application.
-- [ ] Includes any thoughts on design decisions you made that you think are
+- [x] Includes any thoughts on design decisions you made that you think are
   appropriate.
-- [ ] Includes how long you spent on the project, and any other thoughts you
+- [x] Includes how long you spent on the project, and any other thoughts you
   might have or want to communicate.
 
 ### Notes
 - Don’t worry about creating a UI, DB, server, or deployment as a part of the
   code you're writing.
 - Your code should be executable on Mac or Linux.
-
-### My notes
-
-- [ ] Make the script executable and add instructions on how to run it
 
 ## How do I use this?
 
@@ -217,3 +213,72 @@ keep that in mind.
 
 Also we talk about `change`, `change`, and `change`. So sounds like it makes
 sense to create a `Change` class to represent a change.
+
+### The `Change` class 🧙🏻‍♂️
+
+The `Change` class will be responsible for applying the `changes` to the
+output file. It will have the following attributes:
+
+```mermaid
+classDiagram
+  Change <|-- AddSongToPlaylistChange
+  Change <|-- AddPlaylistToUserChange
+  Change <|-- RemovePlaylistChange
+  class Change {
+    +Object data
+    +apply_to
+    +create
+  }
+  class AddSongToPlaylistChange {
+    +apply_to
+  }
+  class AddPlaylistToUserChange {
+    +apply_to
+  }
+  class RemovePlaylistChange {
+    +apply_to
+  }
+```
+
+The `Change.create` method will be responsible for creating the appropriate
+subclass based on the `action` field. And the `Change.apply_to` method will be
+responsible for applying the change to the output file.
+
+The inspiration for this is the Factory Method design pattern and I believe it
+suits this project well.
+
+### The `Playlistify` class 🎧
+
+The `Playlistify` class will be responsible for ingesting all files,
+applying the changes to the output file and writes the output file to disk.
+
+## Final thoughts 🤔
+
+It took me about 4 hours to complete this project. I had a lot of fun doing it
+and I learned a lot as it's been a while since the last developed a command line
+application.
+
+### Changes to scale the application
+
+I am not used to create applications that handle very large input files, so I
+might say something silly, but I'll try my best.
+
+Currently it reads the whole input and change files into memory, which is not
+ideal for very large files as it might run out of memory, or have a very long
+execution time.
+
+We could use the MapReduce pattern as inspiration to solve this problem.
+With that, split the input file into chunks and process them in parallel. Then
+ merge the results into a single output file. On the other hand, we need to keep
+in mind that the changes need to be applied in order, so we need to find a way
+to do that. Maybe we could split the changes file into chunks per playlist and
+user.
+
+### Future improvements
+
+- Make the script executable and add instructions on how to run it
+- Add more validations, e.g, check if files are valid; check if song exist before
+adding to playlist
+- Add more documentation, e.g, add `@param` and `@return` to methods
+- Add more file formats support, e.g, support CSV and YAML files
+- Add `--help` flag to show instructions on how to use the script
