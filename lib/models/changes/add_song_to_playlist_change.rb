@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: Validate if songs exist
 class AddSongToPlaylistChange < Change
   def apply_to(output_data)
     playlist = output_data['playlists'].find { |p| p['id'] == playlist_id }

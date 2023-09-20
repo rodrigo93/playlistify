@@ -2,6 +2,7 @@
 
 require_relative 'change'
 
+# TODO: Validate if songs exist
 class AddPlaylistToUserChange < Change
   def apply_to(output_data)
     user_data = user(output_data)
