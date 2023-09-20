@@ -12,23 +12,26 @@ class AddPlaylistToUserChange < Change
       return
     end
 
-    if playlist_exists?(user_data)
-      puts "Playlist ##{playlist['id']} already exists for user ##{user_id}"
-      puts 'Skipping...'
-      return
-    end
+    return if playlist_exists?(user_data)
+    return unless valid_song_ids?(playlist)
 
     user_data['playlists'] << playlist
   end
 
   private
 
+  # Merges the playlist data with the user_id even if 'owner_id' is informed
+  # incorrectly in the changes file
   def playlist
-    @playlist ||= @data['playlist']
+    @playlist ||= @data['playlist'].merge('owner_id' => user_id)
   end
 
   def playlist_exists?(user_data)
-    user_data['playlists'].any? { |p| p['id'] == playlist['id'] }
+    return false unless user_data['playlists'].any? { |p| p['id'] == playlist['id'] }
+
+    puts "Playlist ##{playlist['id']} already exists for user ##{user_id}"
+    puts 'Skipping...'
+    true
   end
 
   def user_id
@@ -37,5 +40,14 @@ class AddPlaylistToUserChange < Change
 
   def user(output_data)
     @user ||= output_data['users'].find { |u| u['id'] == user_id }
+  end
+
+  def valid_song_ids?(playlist)
+    if playlist['song_ids'].nil? || playlist['song_ids'].empty?
+      puts "Skipping playlist ##{playlist['id']} because it's empty"
+      return false
+    end
+
+    true
   end
 end

@@ -8,8 +8,9 @@ RSpec.describe AddPlaylistToUserChange do
   describe '#apply_to' do
     subject { described_class.new(change_data).apply_to(output_data) }
 
-    let(:user_id) { '1' }
+    let(:user_id)     { '1' }
     let(:playlist_id) { '1' }
+    let(:song_ids)    { %w[123 456] }
 
     let(:output_data) do
       {
@@ -24,7 +25,11 @@ RSpec.describe AddPlaylistToUserChange do
     let(:change_data) do
       {
         'user_id' => user_id,
-        'playlist' => { 'id' => playlist_id, 'owner_id' => user_id }
+        'playlist' => {
+          'id' => playlist_id,
+          'owner_id' => user_id,
+          'song_ids' => song_ids
+        }
       }
     end
 
@@ -42,6 +47,21 @@ RSpec.describe AddPlaylistToUserChange do
         end
       end
 
+      context 'and the wrong owner_id is informed' do
+        let(:change_data) do
+          super()['playlist'].merge!('owner_id' => '333')
+          super()
+        end
+
+        it 'adds the playlist to the user with correct owner_id' do
+          subject
+
+          expect(output_data['users'].first['playlists'].size).to eq(1)
+          expect(output_data['users'].first['playlists'].first['id']).to eq(playlist_id)
+          expect(output_data['users'].first['playlists'].first['owner_id']).to eq(user_id)
+        end
+      end
+
       context 'and the playlist does not exist for the user' do
         it 'adds the playlist to the user' do
           subject
@@ -49,6 +69,31 @@ RSpec.describe AddPlaylistToUserChange do
           expect(output_data['users'].first['playlists'].size).to eq(1)
           expect(output_data['users'].first['playlists'].first['id']).to eq(playlist_id)
           expect(output_data['users'].first['playlists'].first['owner_id']).to eq(user_id)
+          expect(output_data['users'].first['playlists'].first['song_ids']).to eq(song_ids)
+        end
+      end
+
+      context 'and song_ids is "nil"' do
+        let(:song_ids) { nil }
+
+        it 'skips adding the playlist and logs a message' do
+          expect { subject }.to output(
+            "Skipping playlist ##{playlist_id} because it's empty\n"
+          ).to_stdout
+
+          expect(output_data['users'][0]['playlists']).to be_empty
+        end
+      end
+
+      context 'and song_ids is "empty"' do
+        let(:song_ids) { [] }
+
+        it 'skips adding the playlist and logs a message' do
+          expect { subject }.to output(
+            "Skipping playlist ##{playlist_id} because it's empty\n"
+          ).to_stdout
+
+          expect(output_data['users'][0]['playlists']).to be_empty
         end
       end
     end
