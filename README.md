@@ -14,18 +14,18 @@ powered by Ruby v3.
 The input JSON file consists of a set of `users`, `songs`, and `playlists`
 that are part of an online music service: [spotify.json](https://gist.githubusercontent.com/vitchell/fe0b1cb51e158058fb1b9d827584d01f/raw/f00f4d94d9d87b0d928bb3766a2667fb502d7407/spotify.json).
 
-- [ ] Ingests `spotify.json`
-- [ ] Ingests a `changes file`, which can take whatever form you like (we use
+- [x] Ingests `spotify.json`
+- [x] Ingests a `changes file`, which can take whatever form you like (we use
   `changes.json` in our example, but you’re free to name it whatever, and format
   it as text, YAML, CSV, or whatever)
-- [ ] Outputs `output.json` in the same structure as `spotify.json`, with the
+- [x] Outputs `output.json` in the same structure as `spotify.json`, with the
   changes applied. The types of changes you need to support are enumerated below
 
 ### Features
-- [ ] Add an existing song to an existing playlist
-- [ ] Add a new playlist for an existing user; the playlist should contain at
-  least one existing song
-- [ ] Remove an existing playlist
+- [x] Add an existing song to an existing playlist
+- [] Add a new playlist for an existing user; the playlist should contain at
+  least one **existing** song
+- [x] Remove an existing playlist
 
 ### README.md
 - [ ] Explains how to use your application and a way to validate its output
@@ -56,11 +56,60 @@ installed, you can follow [this guide](https://www.ruby-lang.org/en/documentatio
 
 ### Usage
 
-_TODO_
+To use this application, open a terminal in the root of this project, then you
+need to run it with a command with the following format:
 
-### Help
+```shell
+ruby main.rb <input_file>.json <changes_file>.json <output_file>.json
+```
 
-_TODO_
+E.g
+```shell
+ruby main.rb ./samples/spotify.json samples/changes.json samples/output.json
+`````
+### `changes.json` file
+
+The `changes.json` file is a JSON file that contains a list of changes that we
+want to apply to the `spotify.json` file. It's an array of objects with the
+following format (all fields are required):
+
+```json
+[
+  {
+    "action": "add_song_to_playlist",
+    "data": {
+      "playlist_id": "1",
+      "song_id": "5"
+    }
+  },
+  {
+    "action": "add_playlist_to_user",
+    "data": {
+      "user_id": "2",
+      "playlist": {
+        "id": "5",
+        "owner_id": "2",
+        "song_ids": ["2", "3", "4"]
+      }
+    }
+  },
+  {
+    "action": "remove_playlist",
+    "data": {
+      "playlist_id": "3"
+    }
+  }
+]
+```
+
+> **The changes will be applied in the order they are in the file!**
+
+#### Actions
+
+The `action` field can have one of the following values:
+- `add_song_to_playlist`
+- `add_playlist_to_user`
+- `remove_playlist`
 
 ## Contributing
 
