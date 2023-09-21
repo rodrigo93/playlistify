@@ -2,6 +2,30 @@
 
 Manage your spotify (or compatible) playlists directly from your console.
 
+## Table of Content
+* [About](#about)
+* [Project Requirements](#project-requirements)
+  + [Application](#application)
+  + [Features](#features)
+  + [README.md](#readmemd)
+  + [Notes](#notes)
+* [How do I use this?](#how-do-i-use-this)
+  + [Installation](#installation)
+  + [Usage](#usage)
+  + [`changes.json` file](#changesjson-file)
+    - [Actions](#actions)
+* [Contributing](#contributing)
+  + [Setup](#setup)
+  + [Testing](#testing)
+* [Problem Solving Walkthrough 🚶🏻‍♂️](#problem-solving-walkthrough-%F0%9F%9A%B6%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8F)
+  + [Entities relationships and attributes 🔗](#entities-relationships-and-attributes-%F0%9F%94%97)
+  + [The `changes` file 👺](#the-changes-file-%F0%9F%91%BA)
+  + [The `Change` class 🧙🏻‍♂️](#the-change-class-%F0%9F%A7%99%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8F)
+  + [The `Playlistify` class 🎧](#the-playlistify-class-%F0%9F%8E%A7)
+* [Final thoughts 🤔](#final-thoughts-%F0%9F%A4%94)
+  + [Changes to scale the application](#changes-to-scale-the-application)
+  + [Future improvements](#future-improvements)
+
 ## About
 
 This is a solution for [this coding challenge](https://gist.github.com/vitchell/a081703591116bab7e859cc000c98495)
@@ -14,38 +38,34 @@ powered by Ruby v3.
 The input JSON file consists of a set of `users`, `songs`, and `playlists`
 that are part of an online music service: [spotify.json](https://gist.githubusercontent.com/vitchell/fe0b1cb51e158058fb1b9d827584d01f/raw/f00f4d94d9d87b0d928bb3766a2667fb502d7407/spotify.json).
 
-- [ ] Ingests `spotify.json`
-- [ ] Ingests a `changes file`, which can take whatever form you like (we use
+- [x] Ingests `spotify.json`
+- [x] Ingests a `changes file`, which can take whatever form you like (we use
   `changes.json` in our example, but you’re free to name it whatever, and format
   it as text, YAML, CSV, or whatever)
-- [ ] Outputs `output.json` in the same structure as `spotify.json`, with the
+- [x] Outputs `output.json` in the same structure as `spotify.json`, with the
   changes applied. The types of changes you need to support are enumerated below
 
 ### Features
-- [ ] Add an existing song to an existing playlist
-- [ ] Add a new playlist for an existing user; the playlist should contain at
-  least one existing song
-- [ ] Remove an existing playlist
+- [x] Add an existing song to an existing playlist
+- [x] Add a new playlist for an existing user; the playlist should contain at
+  least one **existing** song
+- [x] Remove an existing playlist
 
 ### README.md
-- [ ] Explains how to use your application and a way to validate its output
-- [ ] Describes what changes you would need to make in order to scale this
+- [x] Explains how to use your application and a way to validate its output
+- [x] Describes what changes you would need to make in order to scale this
   application to handle very large input files and/or very large changes files.
   Just describe these changes — please do not implement a scaled-up version of
   the application.
-- [ ] Includes any thoughts on design decisions you made that you think are
+- [x] Includes any thoughts on design decisions you made that you think are
   appropriate.
-- [ ] Includes how long you spent on the project, and any other thoughts you
+- [x] Includes how long you spent on the project, and any other thoughts you
   might have or want to communicate.
 
 ### Notes
 - Don’t worry about creating a UI, DB, server, or deployment as a part of the
   code you're writing.
 - Your code should be executable on Mac or Linux.
-
-### My notes
-
-- [ ] Make the script executable and add instructions on how to run it
 
 ## How do I use this?
 
@@ -56,11 +76,60 @@ installed, you can follow [this guide](https://www.ruby-lang.org/en/documentatio
 
 ### Usage
 
-_TODO_
+To use this application, open a terminal in the root of this project, then you
+need to run it with a command with the following format:
 
-### Help
+```shell
+ruby main.rb <input_file>.json <changes_file>.json <output_file>.json
+```
 
-_TODO_
+E.g
+```shell
+ruby main.rb ./samples/spotify.json samples/changes.json samples/output.json
+`````
+### `changes.json` file
+
+The `changes.json` file is a JSON file that contains a list of changes that we
+want to apply to the `spotify.json` file. It's an array of objects with the
+following format (all fields are required):
+
+```json
+[
+  {
+    "action": "add_song_to_playlist",
+    "data": {
+      "playlist_id": "1",
+      "song_id": "5"
+    }
+  },
+  {
+    "action": "add_playlist_to_user",
+    "data": {
+      "user_id": "2",
+      "playlist": {
+        "id": "5",
+        "owner_id": "2",
+        "song_ids": ["2", "3", "4"]
+      }
+    }
+  },
+  {
+    "action": "remove_playlist",
+    "data": {
+      "playlist_id": "3"
+    }
+  }
+]
+```
+
+> **The changes will be applied in the order they are in the file!**
+
+#### Actions
+
+The `action` field can have one of the following values:
+- `add_song_to_playlist`
+- `add_playlist_to_user`
+- `remove_playlist`
 
 ## Contributing
 
@@ -168,3 +237,72 @@ keep that in mind.
 
 Also we talk about `change`, `change`, and `change`. So sounds like it makes
 sense to create a `Change` class to represent a change.
+
+### The `Change` class 🧙🏻‍♂️
+
+The `Change` class will be responsible for applying the `changes` to the
+output file. It will have the following attributes:
+
+```mermaid
+classDiagram
+  Change <|-- AddSongToPlaylistChange
+  Change <|-- AddPlaylistToUserChange
+  Change <|-- RemovePlaylistChange
+  class Change {
+    +Object data
+    +apply_to
+    +create
+  }
+  class AddSongToPlaylistChange {
+    +apply_to
+  }
+  class AddPlaylistToUserChange {
+    +apply_to
+  }
+  class RemovePlaylistChange {
+    +apply_to
+  }
+```
+
+The `Change.create` method will be responsible for creating the appropriate
+subclass based on the `action` field. And the `Change.apply_to` method will be
+responsible for applying the change to the output file.
+
+The inspiration for this is the Factory Method design pattern and I believe it
+suits this project well.
+
+### The `Playlistify` class 🎧
+
+The `Playlistify` class will be responsible for ingesting all files,
+applying the changes to the output file and writes the output file to disk.
+
+## Final thoughts 🤔
+
+It took me about 4 hours to complete this project. I had a lot of fun doing it
+and I learned a lot as it's been a while since the last developed a command line
+application.
+
+### Changes to scale the application
+
+I am not used to create applications that handle very large input files, so I
+might say something silly, but I'll try my best.
+
+Currently it reads the whole input and change files into memory, which is not
+ideal for very large files as it might run out of memory, or have a very long
+execution time.
+
+We could use the MapReduce pattern as inspiration to solve this problem.
+With that, split the input file into chunks and process them in parallel. Then
+ merge the results into a single output file. On the other hand, we need to keep
+in mind that the changes need to be applied in order, so we need to find a way
+to do that. Maybe we could split the changes file into chunks per playlist and
+user.
+
+### Future improvements
+
+- Make the script executable and add instructions on how to run it
+- Add more validations, e.g, check if files are valid; check if song exist before
+adding to playlist
+- Add more documentation, e.g, add `@param` and `@return` to methods
+- Add more file formats support, e.g, support CSV and YAML files
+- Add `--help` flag to show instructions on how to use the script

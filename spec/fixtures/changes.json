@@ -1,0 +1,44 @@
+[
+  {
+    "action": "add_playlist_to_user",
+    "data": {
+      "user_id": "1",
+      "playlist": {
+        "id": "4",
+        "owner_id": "1",
+        "song_ids": ["6", "8", "11"]
+      }
+    }
+  },
+  {
+    "action": "add_playlist_to_user",
+    "data": {
+      "user_id": "2",
+      "playlist": {
+        "id": "5",
+        "owner_id": "2",
+        "song_ids": ["2", "3", "4"]
+      }
+    }
+  },
+  {
+    "action": "add_song_to_playlist",
+    "data": {
+      "playlist_id": "1",
+      "song_id": "5"
+    }
+  },
+  {
+    "action": "add_song_to_playlist",
+    "data": {
+      "playlist_id": "2",
+      "song_id": "12"
+    }
+  },
+  {
+    "action": "remove_playlist",
+    "data": {
+      "playlist_id": "3"
+    }
+  }
+]
