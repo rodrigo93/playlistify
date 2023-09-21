@@ -2,6 +2,30 @@
 
 Manage your spotify (or compatible) playlists directly from your console.
 
+## Table of Content
+* [About](#about)
+* [Project Requirements](#project-requirements)
+  + [Application](#application)
+  + [Features](#features)
+  + [README.md](#readmemd)
+  + [Notes](#notes)
+* [How do I use this?](#how-do-i-use-this)
+  + [Installation](#installation)
+  + [Usage](#usage)
+  + [`changes.json` file](#changesjson-file)
+    - [Actions](#actions)
+* [Contributing](#contributing)
+  + [Setup](#setup)
+  + [Testing](#testing)
+* [Problem Solving Walkthrough 🚶🏻‍♂️](#problem-solving-walkthrough-%F0%9F%9A%B6%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8F)
+  + [Entities relationships and attributes 🔗](#entities-relationships-and-attributes-%F0%9F%94%97)
+  + [The `changes` file 👺](#the-changes-file-%F0%9F%91%BA)
+  + [The `Change` class 🧙🏻‍♂️](#the-change-class-%F0%9F%A7%99%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8F)
+  + [The `Playlistify` class 🎧](#the-playlistify-class-%F0%9F%8E%A7)
+* [Final thoughts 🤔](#final-thoughts-%F0%9F%A4%94)
+  + [Changes to scale the application](#changes-to-scale-the-application)
+  + [Future improvements](#future-improvements)
+
 ## About
 
 This is a solution for [this coding challenge](https://gist.github.com/vitchell/a081703591116bab7e859cc000c98495)
